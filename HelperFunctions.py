@@ -36,7 +36,6 @@ def createDict(array):
         i+=1
     return dict
 
-
 #Checks the validity of the puzzle in terms of values/math
 def checkMath(puzzle, dictionary, solution, signDict, answerDict):
     valDict = createValuesDict(puzzle, dictionary, solution)
@@ -75,10 +74,7 @@ def checkRowCol(solution):
         cols = []
     return True
 
-    
-
-
-
+#Creates a dictionary that contains the operation sign for each cage
 def createSignDict(dictionary):
     signDict = {}
     for key in dictionary:
@@ -88,6 +84,7 @@ def createSignDict(dictionary):
             signDict[key] = ''
     return signDict
 
+#Creates a dictionary that contains the correct answer for each cage
 def createAnswerDict(dictionary):
     answerDict = {}
     for key in dictionary:
@@ -98,7 +95,7 @@ def createAnswerDict(dictionary):
         answerDict[key] = int(string)
     return answerDict
 
-
+#Creates a dictionary that contains letters as the key and current values for that cage as the value (list)
 def createValuesDict(puzzle, dictionary, solution):
     valuesDict = {}
     for key in dictionary:
@@ -112,12 +109,7 @@ def createValuesDict(puzzle, dictionary, solution):
         row+=1
     return valuesDict
 
-
-
-
-
-
-
+#Checks to see if a given solution is filled out (no zeroes)
 def solutionFilled(solution):
     for row in range(0, len(solution)):
         for col in range(0, len(solution[0])):
@@ -125,6 +117,7 @@ def solutionFilled(solution):
                 return False
     return True
 
+#Checks if a list has duplicates (ignores 0s)
 def isDistinct(list):
     used = []
     for i in list:
@@ -135,6 +128,7 @@ def isDistinct(list):
         used.append(i)
     return True
 
+#Checks if the solution is valid. Returns false if math or row/col constraints are not satisfied (ignores cases with 0s)
 def isValid(puzzle, dictionary, solution, signDict, answerDict):
     for row in range(0, len(solution)):
         if not isDistinct(solution[row]):
@@ -151,32 +145,9 @@ def isValid(puzzle, dictionary, solution, signDict, answerDict):
 
     if not checkMath(puzzle, dictionary, solution, signDict, answerDict):
         return False
-    
     return True
 
-def findEmpty(solution):
-    for x in range(len(solution)):
-        for y in range(len(solution[0])):
-            if solution[x][y] == 0:
-                return (x, y)
-    return None
-
-
-def stagedSolution(valuesDict, puzzle):
-    newSolution = [[0 for i in range(0, len(puzzle))] for j in range(0,len(puzzle))]
-    singleDict = {}
-    for key in valuesDict:
-        if(len(valuesDict[key]) == 1):
-            singleDict[key] = valuesDict[key]
-    #Get the (row, col) of single letter values and assign that value to the newSolution
-    for row in range(0, len(puzzle)):
-        for letter in range(0, len(puzzle[0])):
-            if(puzzle[row][letter] in singleDict):
-                newSolution[row][letter] = singleDict[puzzle[row][letter]]
-    return newSolution
-
-
-#Converts the node 2d array to a 2d array of the nodes current values
+#Converts the node 2d array to a 2d array of the nodes current values (numbers)
 def nodeToSolution(nodeSolution):
     solution = [[0 for i in range(0, len(nodeSolution))] for j in range(0,len(nodeSolution))]
     for row in range(0,len(nodeSolution)):
@@ -216,6 +187,7 @@ def getDomain(row, col, nodeSolution):
             domain.append(c)
     return domain
 
+#Prints the solution in a read-friendly way
 def printPuzzles(simple):
     for row in simple:
         for col in row:
@@ -223,9 +195,7 @@ def printPuzzles(simple):
         print()
 
 
-
-
-##LOCAL
+#Gets a starting,random puzzle with no repeats in the rows for the local search
 def startPuzzle(solution):
     new = [[0 for i in range(0, len(solution))] for j in range(0,len(solution))]
     for row in range(0,len(solution)):
@@ -234,11 +204,13 @@ def startPuzzle(solution):
         shuffle(new[row])
     return new
 
+#Calculates and returns total points from math and row,col point values
 def getPoints(puzzle, dictionary, solution, signDict, answerDict):
     mathPoints = getMathPoints(puzzle, dictionary, solution, signDict, answerDict)
     rcPoints = getRCPoints(solution)
     return mathPoints + rcPoints
 
+#Calculates a point value for the number of cages/equations have correct numbers
 def getMathPoints(puzzle, dictionary, solution, signDict, answerDict):
     points = 0
     valuesDict = createValuesDict(puzzle, dictionary, solution)
@@ -255,6 +227,7 @@ def getMathPoints(puzzle, dictionary, solution, signDict, answerDict):
             points+=1
     return points
 
+#Calculates a point value for the number of row,col values satisfy the constraints
 def getRCPoints(solution):
     points = 0
     for row in range(0, len(solution)):
@@ -270,12 +243,3 @@ def getRCPoints(solution):
         if isDistinct(col[column]):
             points+=1
     return points
-
-def findNeighbor(col, solution):
-    if(col == 0):
-        return col+1
-    if(col == len(solution)-1):
-        return col-1
-    
-    c = random.randint(col+1, col-1)
-    return c

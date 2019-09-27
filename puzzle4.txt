@@ -1,0 +1,12 @@
+4
+ABBC
+ADCC
+ADEE
+GGFE
+A:6*
+B:7+
+C:16*
+D:3-
+E:7+
+F:1
+G:2/
